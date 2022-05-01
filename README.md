@@ -1,4 +1,26 @@
-# BabylonJs + vite Boilerplate
+# AudioMotion Analyzer + Babylon JS
+
+**Babylon.js** (https://www.babylonjs.com/) is one of the most powerful, beautiful and simple 3D Web rendering engines in the world. 
+
+**AudioMotion Analyzer** (https://audiomotion.dev/#/) is a high-resolution real-time audio spectrum analyzer built upon Web Audio and Canvas JavaScript APIs.
+
+![image](https://user-images.githubusercontent.com/25833327/166147542-26c8e970-06a5-4e73-afed-c84f3ff24e97.png)
+
+## AudioMotion Demos
+
+https://audiomotion.dev/demo/
+
+## Options
+
+https://audiomotion.dev/#/?id=options-object and further
+
+# Current State
+
+AudioMotion canvas is drawn as Dynamic Texture inside 3D Babylon scene. That's all for the moment :)
+
+***********************************************
+
+## BabylonJs + vite Boilerplate
 
 ## Description
 
