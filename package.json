@@ -15,6 +15,7 @@
     "vite": "^2.8.6"
   },
   "dependencies": {
-    "babylonjs": "^4.2.2"
+    "audiomotion-analyzer": "^3.6.0",
+    "babylonjs": "^5.4.0"
   }
 }
