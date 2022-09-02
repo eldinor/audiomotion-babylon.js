@@ -21,7 +21,7 @@ export class AppOne {
     }
 
     run() {
-        this.debug(false);
+        this.debug(true);
         this.engine.runRenderLoop(() => {
             this.scene.render();
         });
@@ -73,49 +73,60 @@ const createScene = function (
     // Our built-in 'ground' shape.
     const ground = BABYLON.MeshBuilder.CreateGround(
         "ground",
-        { width: 8, height: 6 },
+        { width: 8, height: 8 },
         scene
     );
 
     //Create dynamic texture
-    const textureResolution = 1000;
+    const textureResolution = 800;
 
     const textureGround = new BABYLON.DynamicTexture(
         "dynamic texture",
         textureResolution,
         scene
     );
-    textureGround.vOffset = 0.25;
+    // textureGround.vOffset = 0.25;
 
     const textureContext = textureGround.getContext();
 
     const materialGround = new BABYLON.StandardMaterial("Mat", scene);
-    materialGround.diffuseTexture = textureGround;
+    // materialGround.diffuseTexture = textureGround;
+    materialGround.alpha = 0.5;
+    materialGround.diffuseColor = BABYLON.Color3.Blue();
     materialGround.emissiveTexture = textureGround;
+    //materialGround.opacityTexture = textureGround;
     ground.material = materialGround;
 
     const audioMotion = new AudioMotionAnalyzer(
         document.getElementById("container") as HTMLElement,
         {
             source: document.getElementById("audio") as HTMLMediaElement,
-            //  outlineBars: true,
+            // outlineBars: true,
+            //   lineWidth: 0.5,
             showFPS: true,
-            //  radial: true,
-            // alphaBars: true,
+            radial: false,
+            //alphaBars: true,
             useCanvas: true,
-            ledBars: true,
+            //ledBars: true,
             overlay: true,
-            gradient: "prism",
-            bgAlpha: 1,
+            gradient: "classic",
+            bgAlpha: 0.5,
             showBgColor: true,
+            fillAlpha: 0.5,
+            showPeaks: true,
+            showScaleX: false,
         }
     );
     console.log(audioMotion);
 
     audioMotion.width = 800;
-    audioMotion.height = 600;
+    audioMotion.height = 800;
 
-    audioMotion.mode = 2;
+    audioMotion.mode = 3;
+
+    const box = BABYLON.MeshBuilder.CreateBox("box", { size: 1 }, scene);
+
+    box.position.y = -2;
 
     scene.onBeforeRenderObservable.add(function () {
         textureContext.drawImage(audioMotion.canvas, 0, 0);
