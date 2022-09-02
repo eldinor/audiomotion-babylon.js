@@ -101,9 +101,10 @@ const createScene = function (
         document.getElementById("container") as HTMLElement,
         {
             source: document.getElementById("audio") as HTMLMediaElement,
+            onCanvasDraw: drawCallback,
             // outlineBars: true,
             //   lineWidth: 0.5,
-            showFPS: true,
+            // showFPS: true,
             radial: false,
             //alphaBars: true,
             useCanvas: true,
@@ -138,5 +139,24 @@ const createScene = function (
         textureGround.update();
     }, 50);
 */
+
+    function drawCallback(instance: any) {
+        const ctx = instance.canvasCtx,
+            baseSize = (instance.isFullscreen ? 40 : 30) * instance.pixelRatio;
+
+        // use the 'energy' value to increase the font size and make the logo pulse to the beat
+        ctx.font = `${
+            baseSize + instance.getEnergy() * 25 * instance.pixelRatio
+        }px Orbitron, sans-serif`;
+
+        ctx.fillStyle = "#FFCC00";
+        ctx.textAlign = "center";
+        ctx.fillText(
+            "MetaDojo",
+            instance.canvas.width - baseSize * 4,
+            baseSize * 2
+        );
+    }
+
     return scene;
 };
