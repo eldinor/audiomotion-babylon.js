@@ -97,27 +97,26 @@ const createScene = function (
     //materialGround.opacityTexture = textureGround;
     ground.material = materialGround;
 
-    const audioMotion = new AudioMotionAnalyzer(
-        document.getElementById("container") as HTMLElement,
-        {
-            source: document.getElementById("audio") as HTMLMediaElement,
-            onCanvasDraw: drawCallback,
-            // outlineBars: true,
-            //   lineWidth: 0.5,
-            // showFPS: true,
-            radial: false,
-            //alphaBars: true,
-            useCanvas: true,
-            //ledBars: true,
-            overlay: true,
-            gradient: "classic",
-            bgAlpha: 0.5,
-            showBgColor: true,
-            fillAlpha: 0.5,
-            showPeaks: true,
-            showScaleX: false,
-        }
-    );
+    let container = document.getElementById("container");
+
+    const audioMotion = new AudioMotionAnalyzer(container!, {
+        source: document.getElementById("audio") as HTMLMediaElement,
+        onCanvasDraw: drawCallback,
+        // outlineBars: true,
+        //   lineWidth: 0.5,
+        // showFPS: true,
+        radial: false,
+        //alphaBars: true,
+        useCanvas: true,
+        //ledBars: true,
+        overlay: true,
+        gradient: "classic",
+        bgAlpha: 0.5,
+        showBgColor: true,
+        fillAlpha: 0.5,
+        showPeaks: true,
+        showScaleX: false,
+    });
     console.log(audioMotion);
 
     audioMotion.width = 800;
@@ -127,7 +126,48 @@ const createScene = function (
 
     const box = BABYLON.MeshBuilder.CreateBox("box", { size: 1 }, scene);
 
-    box.position.y = -2;
+    box.position.y = 2.25;
+    box.position.z = 5.25;
+    box.material = materialGround;
+
+    const sphere = BABYLON.MeshBuilder.CreateSphere(
+        "sphere",
+        { diameter: 3, segments: 32 },
+        scene
+    );
+    sphere.position.y = 1;
+    sphere.position.x = -6;
+    sphere.rotation.y = BABYLON.Tools.ToRadians(-60);
+    // sphere.material = materialGround;
+    const spMat = new BABYLON.StandardMaterial("spMat", scene);
+    spMat.diffuseColor = BABYLON.Color3.Magenta();
+    spMat.emissiveTexture = textureGround;
+
+    sphere.material = spMat;
+
+    BABYLON.NodeMaterial.ParseFromSnippetAsync("#73IWAR#1", scene).then(
+        (nodeMaterial) => {
+            let inputBlocks = nodeMaterial.getInputBlocks();
+            for (let each in inputBlocks) {
+                if (inputBlocks[each].name === "TopLeft") {
+                    console.log(inputBlocks[each]);
+                    inputBlocks[each].value.x = 0.1;
+                    inputBlocks[each].value.y = 0.1;
+                }
+                if (inputBlocks[each].name === "OutOfBoundsColor") {
+                    console.log(inputBlocks[each]);
+                    inputBlocks[each].value.r = 0.5;
+                    inputBlocks[each].value.g = 0.5;
+                    inputBlocks[each].value.b = 1;
+                    // inputBlocks[each].value.a = 0.5;
+                    inputBlocks[each].value.a = 1;
+                }
+            }
+            sphere.material = nodeMaterial;
+
+            nodeMaterial.getTextureBlocks()[0].texture = textureGround;
+        }
+    );
 
     scene.onBeforeRenderObservable.add(function () {
         textureContext.drawImage(audioMotion.canvas, 0, 0);
@@ -147,7 +187,7 @@ const createScene = function (
         // use the 'energy' value to increase the font size and make the logo pulse to the beat
         ctx.font = `${
             baseSize + instance.getEnergy() * 25 * instance.pixelRatio
-        }px Orbitron, sans-serif`;
+        }px Arial, sans-serif`;
 
         ctx.fillStyle = "#FFCC00";
         ctx.textAlign = "center";

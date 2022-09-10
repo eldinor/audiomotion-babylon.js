@@ -19,8 +19,8 @@
       }
 
       #renderCanvas {
-        width: 90%;
-        height: 50%;
+        width: 100%;
+        height: 100%;
       }
       #container {
         height: 300px;
@@ -34,14 +34,15 @@
 
   <body>
     <canvas id="renderCanvas"></canvas>
-    <div id="container"></div>
-    <audio
-      id="audio"
-      src="https://icecast2.ufpel.edu.br/live"
-      controls
-      crossorigin="anonymous"
-      style="padding-left: 300px"
-    ></audio>
+    <div id="wrapper" style="position: absolute; top: 0px; right: 0px">
+      <div id="container"></div>
+      <audio
+        id="audio"
+        src="https://icecast2.ufpel.edu.br/live"
+        controls
+        crossorigin="anonymous"
+      ></audio>
+    </div>
     <!--
     <div
       id="test"
