@@ -1,5 +1,92 @@
 import * as BABYLON from "babylonjs";
 import AudioMotionAnalyzer from "audiomotion-analyzer";
+
+type amdata = {
+    data: any;
+};
+
+class audioMotionTexture {
+    [x: string]: any;
+    constructor(
+        name: string,
+        resolution: number,
+        amwidth: number,
+        amheight: number,
+        amsource: string,
+        amoptions: any,
+        scene: BABYLON.Scene,
+        callback?: any
+    ) {
+        const amt = new BABYLON.DynamicTexture(
+            name,
+            resolution,
+            scene
+        ) as BABYLON.DynamicTexture & amdata;
+        const ctx = amt.getContext();
+
+        const audioMotion = new AudioMotionAnalyzer(undefined, {
+            source: document.getElementById(amsource) as HTMLMediaElement,
+            //  onCanvasDraw: drawCallback,
+            // outlineBars: true,
+            //   lineWidth: 0.5,
+            // showFPS: true,
+            radial: false,
+            //alphaBars: true,
+            useCanvas: true,
+            //ledBars: true,
+            overlay: false,
+            gradient: "prism",
+            bgAlpha: 0.5,
+            showBgColor: false,
+            fillAlpha: 0.5,
+            showPeaks: true,
+            showScaleX: false,
+        });
+
+        amt.data = audioMotion;
+
+        console.log(amt);
+
+        const ddd = amt.data;
+
+        console.log(ddd);
+
+        let x = audioMotionTexture.prototype;
+
+        console.log(x);
+
+        const amarray = Object.getOwnPropertyNames(amt.data);
+
+        amarray.map((m) => {
+            if (!m.includes("_")) {
+                console.log(m);
+            }
+        });
+
+        console.log(amarray);
+
+        audioMotion.width = amwidth;
+        audioMotion.height = amheight;
+        audioMotion.onCanvasDraw = callback;
+
+        audioMotion.radial = amoptions.radial;
+        audioMotion.mode = amoptions.mode;
+
+        //  const {options} = audioMotion
+
+        console.log(audioMotion);
+
+        console.log(audioMotion);
+
+        scene.onBeforeRenderObservable.add(function () {
+            ctx.drawImage(audioMotion.canvas, 0, 0);
+            amt.update();
+        });
+
+        return amt;
+    }
+}
+
 export class AppOne {
     engine: BABYLON.Engine;
     scene: BABYLON.Scene;
@@ -21,7 +108,7 @@ export class AppOne {
     }
 
     run() {
-        this.debug(true);
+        this.debug(false);
         this.engine.runRenderLoop(() => {
             this.scene.render();
         });
@@ -36,6 +123,23 @@ const createScene = function (
 
     // This creates a basic Babylon Scene object (non-mesh)
     const scene = new BABYLON.Scene(engine);
+
+    const ggg = new audioMotionTexture(
+        "AMT",
+        800,
+        800,
+        800,
+        "audio",
+        { radial: false, mode: 5 },
+        scene,
+        function () {
+            //    console.log("callback");
+        }
+    );
+
+    //   ggg.wAng = BABYLON.Tools.ToRadians(180);
+
+    //   console.log(ggg);
 
     // This creates and positions a free camera (non-mesh)
     const camera = new BABYLON.FreeCamera(
@@ -93,25 +197,25 @@ const createScene = function (
     // materialGround.diffuseTexture = textureGround;
     materialGround.alpha = 0.5;
     materialGround.diffuseColor = BABYLON.Color3.Blue();
-    materialGround.emissiveTexture = textureGround;
+    (materialGround.emissiveTexture as audioMotionTexture) = ggg;
     //materialGround.opacityTexture = textureGround;
     ground.material = materialGround;
 
     let container = document.getElementById("container");
 
-    const audioMotion = new AudioMotionAnalyzer(container!, {
-        source: document.getElementById("audio") as HTMLMediaElement,
+    const audioMotion = new AudioMotionAnalyzer(undefined, {
+        source: document.getElementById("audio2") as HTMLMediaElement,
         onCanvasDraw: drawCallback,
         // outlineBars: true,
         //   lineWidth: 0.5,
         // showFPS: true,
         radial: false,
-        //alphaBars: true,
+        alphaBars: true,
         useCanvas: true,
         //ledBars: true,
         overlay: true,
         gradient: "classic",
-        bgAlpha: 0.5,
+        bgAlpha: 0.9,
         showBgColor: true,
         fillAlpha: 0.5,
         showPeaks: true,
@@ -137,7 +241,8 @@ const createScene = function (
     );
     sphere.position.y = 1;
     sphere.position.x = -6;
-    sphere.rotation.y = BABYLON.Tools.ToRadians(-60);
+    sphere.rotation.y = BABYLON.Tools.ToRadians(210);
+    sphere.rotation.x = BABYLON.Tools.ToRadians(180);
     // sphere.material = materialGround;
     const spMat = new BABYLON.StandardMaterial("spMat", scene);
     spMat.diffuseColor = BABYLON.Color3.Magenta();
@@ -145,27 +250,28 @@ const createScene = function (
 
     sphere.material = spMat;
 
-    BABYLON.NodeMaterial.ParseFromSnippetAsync("#73IWAR#1", scene).then(
+    BABYLON.NodeMaterial.ParseFromSnippetAsync("#73IWAR#13", scene).then(
         (nodeMaterial) => {
             let inputBlocks = nodeMaterial.getInputBlocks();
             for (let each in inputBlocks) {
                 if (inputBlocks[each].name === "TopLeft") {
                     console.log(inputBlocks[each]);
-                    inputBlocks[each].value.x = 0.1;
-                    inputBlocks[each].value.y = 0.1;
+                    inputBlocks[each].value.x = 0.2;
+                    inputBlocks[each].value.y = 0.4;
                 }
                 if (inputBlocks[each].name === "OutOfBoundsColor") {
                     console.log(inputBlocks[each]);
                     inputBlocks[each].value.r = 0.5;
                     inputBlocks[each].value.g = 0.5;
                     inputBlocks[each].value.b = 1;
-                    // inputBlocks[each].value.a = 0.5;
-                    inputBlocks[each].value.a = 1;
+                    inputBlocks[each].value.a = 0.5;
+                    // inputBlocks[each].value.a = 1;
                 }
             }
             sphere.material = nodeMaterial;
 
-            nodeMaterial.getTextureBlocks()[0].texture = textureGround;
+            (nodeMaterial.getTextureBlocks()[0].texture as audioMotionTexture) =
+                ggg;
         }
     );
 
