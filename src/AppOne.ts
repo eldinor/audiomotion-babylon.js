@@ -1,5 +1,6 @@
 import * as BABYLON from "babylonjs";
 import AudioMotionAnalyzer from "audiomotion-analyzer";
+import { SmoothStepBlock } from "babylonjs";
 export class AppOne {
     engine: BABYLON.Engine;
     scene: BABYLON.Scene;
@@ -50,27 +51,14 @@ const createScene = function (
     // This attaches the camera to the canvas
     camera.attachControl(canvas, true);
 
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     const light = new BABYLON.HemisphericLight(
         "light",
         new BABYLON.Vector3(0, 1, 0),
         scene
     );
 
-    // Default intensity is 1. Let's dim the light a small amount
     light.intensity = 0.7;
-    /*
-    // Our built-in 'sphere' shape.
-    var sphere = BABYLON.MeshBuilder.CreateSphere(
-        "sphere",
-        { diameter: 2, segments: 32 },
-        scene
-    );
-*/
-    // Move the sphere upward 1/2 its height
-    // sphere.position.y = 1;
 
-    // Our built-in 'ground' shape.
     const ground = BABYLON.MeshBuilder.CreateGround(
         "ground",
         { width: 8, height: 8 },
@@ -85,16 +73,14 @@ const createScene = function (
         textureResolution,
         scene
     );
-    // textureGround.vOffset = 0.25;
 
     const textureContext = textureGround.getContext();
 
     const materialGround = new BABYLON.StandardMaterial("Mat", scene);
-    // materialGround.diffuseTexture = textureGround;
-    materialGround.alpha = 0.5;
+    // materialGround.disableLighting = true;
+    materialGround.alpha = 0.75;
     materialGround.diffuseColor = BABYLON.Color3.Blue();
     materialGround.emissiveTexture = textureGround;
-    //materialGround.opacityTexture = textureGround;
     ground.material = materialGround;
 
     let container = document.getElementById("container");
@@ -103,9 +89,9 @@ const createScene = function (
         source: document.getElementById("audio") as HTMLMediaElement,
         onCanvasDraw: drawCallback,
         // outlineBars: true,
-        //   lineWidth: 0.5,
+        // lineWidth: 0.5,
         // showFPS: true,
-        radial: false,
+        radial: true,
         //alphaBars: true,
         useCanvas: true,
         //ledBars: true,
@@ -135,34 +121,35 @@ const createScene = function (
         { diameter: 3, segments: 32 },
         scene
     );
-    sphere.position.y = 1;
+    sphere.position.y = 3;
     sphere.position.x = -6;
-    sphere.rotation.y = BABYLON.Tools.ToRadians(-60);
-    // sphere.material = materialGround;
+    sphere.rotation.y = BABYLON.Tools.ToRadians(210);
+    sphere.rotation.x = BABYLON.Tools.ToRadians(180);
     const spMat = new BABYLON.StandardMaterial("spMat", scene);
     spMat.diffuseColor = BABYLON.Color3.Magenta();
     spMat.emissiveTexture = textureGround;
 
     sphere.material = spMat;
+    box.material = spMat;
 
-    BABYLON.NodeMaterial.ParseFromSnippetAsync("#73IWAR#1", scene).then(
+    BABYLON.NodeMaterial.ParseFromSnippetAsync("#73IWAR#13", scene).then(
         (nodeMaterial) => {
             let inputBlocks = nodeMaterial.getInputBlocks();
             for (let each in inputBlocks) {
                 if (inputBlocks[each].name === "TopLeft") {
-                    console.log(inputBlocks[each]);
-                    inputBlocks[each].value.x = 0.1;
-                    inputBlocks[each].value.y = 0.1;
+                    // console.log(inputBlocks[each]);
+                    inputBlocks[each].value.x = 0.15;
+                    inputBlocks[each].value.y = 0.3;
                 }
                 if (inputBlocks[each].name === "OutOfBoundsColor") {
-                    console.log(inputBlocks[each]);
+                    //   console.log(inputBlocks[each]);
                     inputBlocks[each].value.r = 0.5;
-                    inputBlocks[each].value.g = 0.5;
+                    inputBlocks[each].value.g = 0.1;
                     inputBlocks[each].value.b = 1;
-                    // inputBlocks[each].value.a = 0.5;
-                    inputBlocks[each].value.a = 1;
+                    inputBlocks[each].value.a = 0.8;
                 }
             }
+            nodeMaterial.wireframe = true;
             sphere.material = nodeMaterial;
 
             nodeMaterial.getTextureBlocks()[0].texture = textureGround;
@@ -172,13 +159,8 @@ const createScene = function (
     scene.onBeforeRenderObservable.add(function () {
         textureContext.drawImage(audioMotion.canvas, 0, 0);
         textureGround.update();
+        sphere.rotation.y += 0.002;
     });
-    /*
-    setInterval(() => {
-        textureContext.drawImage(audioMotion.canvas, 0, 0);
-        textureGround.update();
-    }, 50);
-*/
 
     function drawCallback(instance: any) {
         const ctx = instance.canvasCtx,
@@ -192,9 +174,9 @@ const createScene = function (
         ctx.fillStyle = "#FFCC00";
         ctx.textAlign = "center";
         ctx.fillText(
-            "MetaDojo",
-            instance.canvas.width - baseSize * 4,
-            baseSize * 2
+            "BabylonPress.org",
+            instance.canvas.width - baseSize * 6,
+            baseSize * 3
         );
     }
 
