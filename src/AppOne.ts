@@ -22,7 +22,7 @@ export class AppOne {
     }
 
     run() {
-        this.debug(true);
+        this.debug(false);
         this.engine.runRenderLoop(() => {
             this.scene.render();
         });
@@ -85,7 +85,7 @@ const createScene = function (
 
     let container = document.getElementById("container");
 
-    const audioMotion = new AudioMotionAnalyzer(container!, {
+    const audioMotion = new AudioMotionAnalyzer(null, {
         source: document.getElementById("audio") as HTMLMediaElement,
         onCanvasDraw: drawCallback,
         // outlineBars: true,

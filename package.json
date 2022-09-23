@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "audiomotion-analyzer": "^3.6.0",
-    "babylonjs": "^5.4.0"
+    "babylonjs": "^5.25.0"
   }
 }
